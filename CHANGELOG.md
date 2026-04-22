@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.19.0 - 2026-04-22
+### Features
+* Improved the performance of the [`get_data_file()`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#get_data_file) instance that is refreshed whenever the SDK configuration is updated.
+* The [`get_feature_list`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#get_feature_list) method has been deprecated in favor of `get_data_file()`.
+* Added support for variation simulation when feature flags are **inactive (OFF state)** across the following methods:
+  - [`get_variation`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#get_variation)
+  - [`get_variations`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#get_variations)
+  - [`feature_active?`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#feature_active)
+  - This support is also extended to the following **deprecated methods**:
+    - [`get_active_feature_list_for_visitor`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#get_active_feature_list_for_visitor)
+    - [`get_active_features`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#get_active_features)
+    - [`get_feature_variation_key`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#get_feature_variation_key)
+    - [`get_feature_variable`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#get_feature_variable)
+
 ## 3.18.0 - 2026-02-13
 ### Features
 * Updated the allowed range for the [`tracking_interval_millisecond`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#additional-configuration). The new range is from **`1000` ms** (default) to **`5000` ms**, allowing a reduction in the number of tracking requests.
