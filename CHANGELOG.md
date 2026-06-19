@@ -23,6 +23,9 @@ All notable changes to this project will be documented in this file.
     - [`get_active_features`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#get_active_features)
     - [`get_feature_variation_key`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#get_feature_variation_key)
     - [`get_feature_variable`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk/#get_feature_variable)
+### Bug fixes
+* Fixed an issue where permanently rejected Data API tracking requests (for example, responses with a `429` status code) prevented visitor sessions from being cleaned up. This could cause sessions to remain in memory indefinitely, leading to excessive RAM usage and potential server slowdowns.
+
 
 ## 3.18.0 - 2026-02-13
 ### Features
