@@ -69,6 +69,8 @@ All notable changes to this project will be documented in this file.
 ## 3.15.0 - 2025-07-23
 ### Features
 * Added the [`evaluate_audiences`](https://developers.kameleoon.com/feature-management-and-experimentation/web-sdks/ruby-sdk#evaluate_audiences) method. This method iterates over all Audiences Explorer segments, evaluates each one, and tracks the segments for which the visitor is targeted using the [`TARGETINGSEGMENT`](https://developers.kameleoon.com/apis/data-api-rest/all-endpoints/post-visit-events/) event.
+### Bug fixes
+* Fixed an issue where the SDK could incorrectly evaluate the **Kameleoon Segment** targeting condition as `false`.
 
 ## 3.14.0 - 2025-06-27
 ### Features
