@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.21.0 - 2026-07-02
+### Features
+* [`wait_init`][wait_init] now accepts an optional `timeout_millisecond` argument to bound how long callers wait for the SDK to become ready. When omitted (or negative), [`config.default_timeout_millisecond`](https://docs.kameleoon.com/developer-docs/sdks/web-sdks/ruby-sdk#configure-the-client) is applied, so `wait_init` never blocks indefinitely. It returns `false` if the timeout elapses before the configuration is loaded.
+### Bug Fixes
+* Fixed a `Concurrent::IllegalOperationError` that could be raised during client initialization when using [concurrent-ruby 1.3.7](https://github.com/ruby-concurrency/concurrent-ruby/releases/tag/v1.3.7). The crash also prevented the background configuration refresh job from starting, causing the SDK configuration to remain stale until the server was restarted.
+
+[wait_init]: https://docs.kameleoon.com/developer-docs/sdks/web-sdks/ruby-sdk#wait_init
+
 ## 3.20.0 - 2026-05-05
 ### Features
 * Added support for **during the current visit** and **during any of the last visits** settings across the following targeting conditions:
