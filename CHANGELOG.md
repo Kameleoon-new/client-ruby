@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.22.0 - 2026-08-27
+### Features
+* Added the new [`is_ready?`][isReady] method, which returns `true` once the SDK has successfully loaded its configuration and is ready for use, and `false` otherwise (for example, while initialization is still in progress or has failed). Unlike [`wait_init`][waitInit], it returns immediately without blocking.
+* Added support for SDK event handlers through the new [`set_event_handler`][setEventHandler] API:
+  - `Kameleoon::Events::EventType::DATAFILE_UPDATE` notifies when the SDK data file (configuration) is updated with [polling](https://docs.kameleoon.com/developer-docs/feature-experimentation/technical-reference/technical-considerations#polling-default-%E2%80%8B) or [streaming](https://docs.kameleoon.com/developer-docs/feature-experimentation/technical-reference/technical-considerations#streaming-premium-option-%E2%80%8B) modes.
+  - `Kameleoon::Events::EventType::HTTP_REQUEST` notifies when SDK HTTP requests complete successfully or fail.
+  - HTTP request events include the request type, HTTP status or failure details, and request duration.
+  - Passing `nil` to `set_event_handler` clears the handler for the selected event type.
+* The [`on_update_configuration`](https://docs.kameleoon.com/developer-docs/sdks/web-sdks/ruby-sdk#on_update_configuration) method has been deprecated in favor of `set_event_handler` with the `DATAFILE_UPDATE` event type.
+### Bug fixes
+* Targeting conditions of a type unsupported by the SDK are now evaluated as `false` instead of `true`, so visitors are no longer targeted by conditions the SDK cannot evaluate.
+* The [`wait_init`][waitInit] method now returns `false` as soon as the SDK fails to load its configuration, without waiting for background retries to sleep out the timeout. The failure which prevented the SDK from initializing is reported to the log. Once the SDK becomes ready, a subsequent `wait_init` call returns `true`.
+
+[isReady]: https://docs.kameleoon.com/developer-docs/sdks/web-sdks/ruby-sdk#is_ready
+[waitInit]: https://docs.kameleoon.com/developer-docs/sdks/web-sdks/ruby-sdk#wait_init
+[setEventHandler]: https://docs.kameleoon.com/developer-docs/sdks/web-sdks/ruby-sdk#set_event_handler
+
 ## 3.21.0 - 2026-07-02
 ### Features
 * [`wait_init`][wait_init] now accepts an optional `timeout_millisecond` argument to bound how long callers wait for the SDK to become ready. When omitted (or negative), [`config.default_timeout_millisecond`](https://docs.kameleoon.com/developer-docs/sdks/web-sdks/ruby-sdk#configure-the-client) is applied, so `wait_init` never blocks indefinitely. It returns `false` if the timeout elapses before the configuration is loaded.
