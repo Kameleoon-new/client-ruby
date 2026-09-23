@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.22.2 - 2026-09-23
+### Bug fixes
+* The SDK now keeps HTTP connections to the Kameleoon APIs alive and reuses them (via the [`net-http-persistent`](https://github.com/drbrain/net-http-persistent) gem, a new dependency), instead of opening a new TCP+TLS connection for every request. This removes a handshake round trip from every remote call (`get_remote_data`, `get_remote_visitor_data`, tracking) and reduces connection churn on the Data API under load. Connections idle for more than 15 seconds are reconnected before reuse, and all kept-alive connections are closed when the client is disposed.
+* Removed the unused `em-http-request` and `em-synchrony` dependencies (and, transitively, `eventmachine`), which the SDK has not used since 2.2.0. Applications that relied on getting EventMachine through the SDK must now declare it themselves.
+* Removed the `rest-client` dependency (and, transitively, `mime-types`, `http-cookie`, `netrc` and `http-accept`). The real-time SSE connection is now opened with `Net::HTTP` directly; behaviour is unchanged.
+* Declared `concurrent-ruby`, which the SDK has always used, as an explicit dependency in the gemspec.
+* Tracking requests are now sent from a bounded thread pool (at most 8 threads and 32 queued requests) instead of a new thread per request. Previously, a slow Data API combined with frequent `flush(visitor_code, instant: true)` calls could accumulate thousands of threads waiting on the request timeout. When the pool is saturated, the visitor data is kept and sent with the next tracking request instead of being dropped.
+* Visitor data of a tracking request that failed with an exception is now marked as unsent and re-sent later. Previously it could stay in the transmitting state forever.
+
 ## 3.22.1 - 2026-09-11
 ### Bug fixes
 * Reduced the load on the Data API during its outages. After a failed tracking request, the SDK sends only one visitor's data per tracking request until a request succeeds, instead of retrying with a full-size (up to 2.5 MB) request on every tracking interval. Once the Data API is reachable again, the accumulated visitor data is sent in full-size requests as usual.
