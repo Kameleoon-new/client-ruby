@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.23.0 - 2026-11-19
+### Features
+* Real-time configuration streaming can now be enabled for server-side SDKs independently of client-side SDKs. The SDK reads the new `configUpdateMode` field of the configuration (`STREAMING` or `STREAMING_SERVER_ONLY` enables streaming) instead of `realTimeUpdate`.
+* Added support for version strings containing pre-release and build metadata, in accordance with [Semantic Versioning](https://semver.org/#semantic-versioning-200). Pre-release and build metadata components are currently ignored, and the version is normalized to `major.minor.patch`.
+### Bug fixes
+* Fixed the SDK getting stuck without configuration updates when the real-time streaming connection could not be established (for example, when the streaming server answers with an error or with an empty response). The SDK now retries the connection once after 10 seconds and then falls back to polling, with the first poll after one minute (or `refresh_interval_minute` if it is shorter); each successful poll switches back to streaming once it is available again.
+* Fixed the SDK getting stuck without configuration updates on a stalled streaming connection (e.g. one silently dropped by a NAT or load balancer). The SDK now treats 6 minutes of silence as a connection failure: it reconnects, and falls back to polling if the new connection stalls as well.
+* Fixed configuration updates being missed while the streaming connection was temporarily down: the SDK handles the `connection-open-event` sent by the streaming server on every (re)connection and fetches the configuration only if it is newer than the one it holds.
+* Fixed the SDK being left without configuration updates when the streaming connection could not be started at all (for example, when no thread could be created). The SDK now keeps polling in that case and retries streaming on the next poll.
+* The SDK now logs an `INFO` message (`SSE connection: '...' was closed by server; reconnecting in ... s`) when the streaming server closes the real-time (SSE) connection. The streaming server recycles connections periodically and the SDK reconnects automatically, so this is expected behavior. Connection failures (error responses, network errors) are still logged as `ERROR`.
+
 ## 3.22.2 - 2026-09-23
 ### Bug fixes
 * The SDK now keeps HTTP connections to the Kameleoon APIs alive and reuses them (via the [`net-http-persistent`](https://github.com/drbrain/net-http-persistent) gem, a new dependency), instead of opening a new TCP+TLS connection for every request. This removes a handshake round trip from every remote call (`get_remote_data`, `get_remote_visitor_data`, tracking) and reduces connection churn on the Data API under load. Connections idle for more than 15 seconds are reconnected before reuse, and all kept-alive connections are closed when the client is disposed.
